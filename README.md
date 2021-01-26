@@ -1,2 +1,2 @@
 # chessmemorygame
-Just playing with alpine.js
+Just playing with HTML, CSS and VanillaJS

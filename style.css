@@ -17,7 +17,7 @@
     bottom: 0;
     width: 100%;
     height: 100%;
-    grid-template-columns: 200px 1fr;
+    grid-template-columns: 250px 1fr;
 }
 
 
@@ -115,7 +115,10 @@
 .piece button:focus {
     background-color: rgba(var(--green), 0.2);
 }
-.show-moves .box .highlight::before {
+.show-moves .box .highlight {
+    background-color: rgba(var(--green),0.4);
+}
+/* .show-moves .box .highlight::before {
     content: '';
     display: block;
     width: 20px;
@@ -126,7 +129,7 @@
     left: 50%;
     transform: translate3d(-50%, -50%, 0);
     background-color: rgba(var(--green),9);
-}
+} */
 .show-moves .box .danger {
     background-color: rgba(255,0,0,9);
 }
@@ -138,6 +141,14 @@
     flex: 0 0 300px;
     background: #e2e2e2;
     z-index: 100;
+}
+.board-controls {
+    padding: 0 20px;
+}
+.board-controls button {
+    width: 100%;
+    padding: 7px 10px;
+    margin-bottom: 10px;
 }
 .pieces > div {
     display: flex;

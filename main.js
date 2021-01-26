@@ -58,22 +58,13 @@ const App = {
     showMoves: (box, piece) => {
         if (!piece) return;
 
+        App.clearMoves();
+
         const info = getPieceInfo(piece);
         const moves = Rules.moves[info.name](box, info);
 
-        App.clearMoves();
         for (const move of moves) {
             let box = document.querySelector('.box [data-name="' + move + '"]');
-            let currentPiece = box.dataset.piece;
-
-            if (currentPiece) {
-                let cpInfo = getPieceInfo(currentPiece)
-                if( cpInfo.color !== info.color ) {
-                    box.classList.add('danger');
-                }
-                continue;
-            }
-
             box.classList.add('highlight');
         }
     },
@@ -84,6 +75,8 @@ const App = {
         }
     },
     clearBoard: () => {
+        App.clearMoves();
+
         const boxes = document.querySelectorAll('.box button');
         const pieces = document.querySelectorAll('.piece button');
 
@@ -138,7 +131,7 @@ const App = {
 
 const Game = {
     state: {
-        currentLevel: 1,
+        currentLevel: 3,
         currentPosition: [],
         history: [],
         taken: [],
@@ -155,6 +148,7 @@ const Game = {
     },
     setBoard: (positions) => {
         App.clearBoard();
+        App.clearMoves();
         for (const position of positions) {
             let box = document.querySelector(`[data-name="${position.box}"]`);
             box.dataset.piece = position.piece
@@ -213,50 +207,42 @@ const Rules = {
     },
     moves: {
         b: (box) => {
-            const x = getX(box);
-            const y = getY(box);
             let boxes = [];
+            let moveTo = [
+                ['right', 'up'],
+                ['right', 'down'],
+                ['left', 'down'],
+                ['left', 'up'],
+            ];
 
-            let startX = x - (y-1);
-            let startY = y + (x-1);
-
-            for (let i = 0; i <= 8; i++) {
-                let posX = startX + i;
-                let posY = 1 + i;
-
-                if (!reachLimit(posX, posY)) {
-                    boxes.push(`${getLetter(posX)}${posY}`);
+            for (const direction of moveTo) {
+                for (let i = 0; i < 8; i++) {
+                    let b = Rules.moves.move(box, i, direction[0], direction[1]);
+                    if ( !b ) {
+                        break;
+                    }
+                    boxes.push(b);
                 }
-
-                posX = 1 + i;
-                posY = startY - i;
-
-                if (!reachLimit(posX, posY)) {
-                    boxes.push(`${getLetter(posX)}${posY}`);
-                }
-
             }
 
             return boxes;
         },
         r: (box) => {
-            const x = getX(box);
-            const y = getY(box);
             let boxes = [];
+            let moveTo = [
+                ['right', false],
+                [false, 'down'],
+                ['left', false],
+                [false, 'up'],
+            ];
 
-            for (let i = 0; i <= 8; i++) {
-                let posX = 1 + i;
-                let posY = y;
-
-                if (!reachLimit(posX, posY)) {
-                    boxes.push(`${getLetter(posX)}${posY}`);
-                }
-
-                posX = x;
-                posY = 1 + i;
-
-                if (!reachLimit(posX, posY)) {
-                    boxes.push(`${getLetter(posX)}${posY}`);
+            for (const direction of moveTo) {
+                for (let i = 0; i < 8; i++) {
+                    let b = Rules.moves.move(box, i, direction[0], direction[1]);
+                    if ( !b ) {
+                        break;
+                    }
+                    boxes.push(b);
                 }
             }
 
@@ -332,6 +318,41 @@ const Rules = {
                 .filter(c => !reachLimit(c[0], c[1]))
                 .map(c => `${getLetter(c[0])}${c[1]}`);
         },
+        move: (box, index, movex = false, movey = false) => {
+            let x = getX(box);
+            let y = getY(box);
+
+            if (movex && movex === 'left') {
+                x -= index;
+            }
+            if (movex && movex === 'right') {
+                x += index;
+            }
+            if (movey && movey === 'up') {
+                y += index;
+            }
+            if (movey && movey === 'down') {
+                y -= index;
+            }
+
+            if (x > 8 || x < 1 || y < 1 || y > 8) {
+                return false;
+            }
+
+            let boxName = `${getLetter(x)}${y}`;
+            let piece = hasPiece(boxName);
+            if ( piece ) {
+                let pInfo = getPieceInfo(piece);
+                let cpInfo = getPieceInfo(App.state.currentPiece);
+
+                if (pInfo.color !== cpInfo.color) {
+                    getBox(boxName).classList.add('danger');
+                }
+                return false;
+            }
+
+            return boxName;
+        },
     }
 }
 
@@ -355,6 +376,10 @@ function getX(box) {
 
 function getY(box) {
     return parseInt(box[1]);
+}
+
+function getBox(location) {
+    return document.querySelector('.box [data-name="' + location + '"]');
 }
 
 function getLetter(x) {
@@ -402,6 +427,11 @@ function getRandom(items) {
 
 function isBorderBox(box) {
     return box.indexOf('1') > -1 || box.indexOf('8') > -1;
+}
+
+function hasPiece(b) {
+    let box = getBox(b);
+    return box.dataset.piece;
 }
 
 App.init();
