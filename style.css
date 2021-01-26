@@ -1,0 +1,202 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --box-size: 75px;
+    --box-white: #efefef;
+    --box-black: #777;
+    --green: 45, 136, 45;
+}
+.app-wrapper {
+    position: fixed;
+    display:grid;
+    top:0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    grid-template-columns: 200px 1fr;
+}
+
+
+/**
+* Board
+*/
+.board-wrapper {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+}
+.board {
+    width: calc(var(--box-size) * 8);
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column-reverse;
+    border: 4px solid #ccc;
+    box-shadow: 0 0 45px rgba(0,0,0,0.3);
+    counter-reset: rows;
+}
+.board.flip {
+    flex-direction: column;
+}
+.board.flip .row {
+    flex-direction: row-reverse;
+}
+
+.row {
+    display: flex;
+    width: 100%;
+    counter-increment: rows;
+    position: relative;
+}
+.row::before {
+    content: counter(rows, upper-roman);
+    display: block;
+    position: absolute;
+    top: 5px;
+    right: calc(100% + 15px);
+}
+.row:first-child {
+    counter-reset: columns;
+}
+.row:first-child .box {
+    counter-increment: columns;
+}
+.row:first-child .box::before {
+    content: counter(columns, lower-alpha);
+    display: block;
+    position: absolute;
+    top: calc(100% + 15px);
+    left: 10px;
+}
+.flip .row:first-child .box::before {
+    top: auto;
+    bottom: calc(100% + 15px);
+}
+
+.box {
+    width: var(--box-size);
+    height: var(--box-size);
+    position: relative;
+}
+.row:nth-child(odd) .box:nth-child(odd) {
+    background-color: var(--box-black);
+}
+.row:nth-child(odd) .box:nth-child(even) {
+    background-color: var(--box-white);
+}
+.row:nth-child(even) .box:nth-child(even) {
+    background-color: var(--box-black);
+}
+.row:nth-child(even) .box:nth-child(odd) {
+    background-color: var(--box-white);
+}
+.piece button,
+.box button {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+    outline: 0;
+    background-color: transparent;
+    cursor: pointer;
+}
+.box button:active,
+.box button:focus {
+    background-color: rgba(var(--green), 0.6);
+}
+.piece button:active,
+.piece button:focus {
+    background-color: rgba(var(--green), 0.2);
+}
+.show-moves .box .highlight::before {
+    content: '';
+    display: block;
+    width: 20px;
+    height: 20px;
+    border-radius: 50px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate3d(-50%, -50%, 0);
+    background-color: rgba(var(--green),9);
+}
+.show-moves .box .danger {
+    background-color: rgba(255,0,0,9);
+}
+
+/**
+ * Pieces
+ */
+.controls {
+    flex: 0 0 300px;
+    background: #e2e2e2;
+    z-index: 100;
+}
+.pieces > div {
+    display: flex;
+    flex-wrap: wrap;
+    padding: 10px;
+    justify-content: center;
+}
+.piece {
+    width: var(--box-size);
+    height: var(--box-size);
+    position: relative;
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: 55px 55px;
+}
+.piece.active {
+    outline: 3px solid rgba(var(--green), 1);
+    background-color: rgba(var(--green), 0.3);
+}
+.piece button:disabled {
+    opacity: 0.3;
+}
+[data-piece="kw"] {
+    background-image: url('img/kw.svg');
+}
+[data-piece="qw"] {
+    background-image: url('img/qw.svg');
+}
+[data-piece="bw"] {
+    background-image: url('img/bw.svg');
+}
+[data-piece="nw"] {
+    background-image: url('img/nw.svg');
+}
+[data-piece="rw"] {
+    background-image: url('img/rw.svg');
+}
+[data-piece="pw"] {
+    background-image: url('img/pw.svg');
+}
+[data-piece="kb"] {
+    background-image: url('img/kb.svg');
+}
+[data-piece="qb"] {
+    background-image: url('img/qb.svg');
+}
+[data-piece="bb"] {
+    background-image: url('img/bb.svg');
+}
+[data-piece="nb"] {
+    background-image: url('img/nb.svg');
+}
+[data-piece="rb"] {
+    background-image: url('img/rb.svg');
+}
+[data-piece="pb"] {
+    background-image: url('img/pb.svg');
+}
+.trash-button {
+    background: url('img/trash.svg') no-repeat center center;
+    background-size: 35px 35px;
+}

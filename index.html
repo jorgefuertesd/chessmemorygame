@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chess Memory Game</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-wrapper">
+        <div class="controls">
+            <div class="pieces">
+                <div class="white">
+                    <div class="piece"><button data-piece="kw"></button></div>
+                    <div class="piece"><button data-piece="qw"></button></div>
+                    <div class="piece"><button data-piece="bw"></button></div>
+                    <div class="piece"><button data-piece="nw"></button></div>
+                    <div class="piece"><button data-piece="rw"></button></div>
+                    <div class="piece"><button data-piece="pw"></button></div>
+                </div>
+                <div class="black">
+                    <div class="piece"><button data-piece="kb"></button></div>
+                    <div class="piece"><button data-piece="qb"></button></div>
+                    <div class="piece"><button data-piece="bb"></button></div>
+                    <div class="piece"><button data-piece="nb"></button></div>
+                    <div class="piece"><button data-piece="rb"></button></div>
+                    <div class="piece"><button data-piece="pb"></button></div>
+                </div>
+                <div class="general">
+                    <div class="piece"><button data-piece="rm" class="trash-button"></button></div>
+                </div>
+            </div>
+            <div class="board-controls">
+                <div>
+                    <button type="button" onclick="App.clearBoard()">Clear Board</button>
+                </div>
+                <div>
+                    <button onclick="App.clearMoves()">Clear Moves</button>
+                </div>
+                <div>
+                    <button onclick="Game.init()">Play</button>
+                </div>
+                <div>
+                    <label><input type="checkbox" id="flip-board"> Flip Board</label>
+                </div>
+                <div>
+                    <label><input type="checkbox" id="show-moves"> Show Moves</label>
+                </div>
+            </div>
+        </div>
+        <div class="board-wrapper">
+            <div class="board">
+                <div class="row">
+                    <div class="box"><button data-name="a1" data-x="1" data-y="1"></button></div>
+                    <div class="box"><button data-name="b1" data-x="2" data-y="1"></button></div>
+                    <div class="box"><button data-name="c1" data-x="3" data-y="1"></button></div>
+                    <div class="box"><button data-name="d1" data-x="4" data-y="1"></button></div>
+                    <div class="box"><button data-name="e1" data-x="5" data-y="1"></button></div>
+                    <div class="box"><button data-name="f1" data-x="6" data-y="1"></button></div>
+                    <div class="box"><button data-name="g1" data-x="7" data-y="1"></button></div>
+                    <div class="box"><button data-name="h1" data-x="8" data-y="1"></button></div>
+                </div>
+                <div class="row">
+                    <div class="box"><button data-name="a2" data-x="1" data-y="2"></button></div>
+                    <div class="box"><button data-name="b2" data-x="2" data-y="2"></button></div>
+                    <div class="box"><button data-name="c2" data-x="3" data-y="2"></button></div>
+                    <div class="box"><button data-name="d2" data-x="4" data-y="2"></button></div>
+                    <div class="box"><button data-name="e2" data-x="5" data-y="2"></button></div>
+                    <div class="box"><button data-name="f2" data-x="6" data-y="2"></button></div>
+                    <div class="box"><button data-name="g2" data-x="7" data-y="2"></button></div>
+                    <div class="box"><button data-name="h2" data-x="8" data-y="2"></button></div>
+                </div>
+                <div class="row">
+                    <div class="box"><button data-name="a3" data-x="1" data-y="3"></button></div>
+                    <div class="box"><button data-name="b3" data-x="2" data-y="3"></button></div>
+                    <div class="box"><button data-name="c3" data-x="3" data-y="3"></button></div>
+                    <div class="box"><button data-name="d3" data-x="4" data-y="3"></button></div>
+                    <div class="box"><button data-name="e3" data-x="5" data-y="3"></button></div>
+                    <div class="box"><button data-name="f3" data-x="6" data-y="3"></button></div>
+                    <div class="box"><button data-name="g3" data-x="7" data-y="3"></button></div>
+                    <div class="box"><button data-name="h3" data-x="8" data-y="3"></button></div>
+                </div>
+                <div class="row">
+                    <div class="box"><button data-name="a4" data-x="1" data-y="4"></button></div>
+                    <div class="box"><button data-name="b4" data-x="2" data-y="4"></button></div>
+                    <div class="box"><button data-name="c4" data-x="3" data-y="4"></button></div>
+                    <div class="box"><button data-name="d4" data-x="4" data-y="4"></button></div>
+                    <div class="box"><button data-name="e4" data-x="5" data-y="4"></button></div>
+                    <div class="box"><button data-name="f4" data-x="6" data-y="4"></button></div>
+                    <div class="box"><button data-name="g4" data-x="7" data-y="4"></button></div>
+                    <div class="box"><button data-name="h4" data-x="8" data-y="4"></button></div>
+                </div>
+                <div class="row">
+                    <div class="box"><button data-name="a5" data-x="1" data-y="5"></button></div>
+                    <div class="box"><button data-name="b5" data-x="2" data-y="5"></button></div>
+                    <div class="box"><button data-name="c5" data-x="3" data-y="5"></button></div>
+                    <div class="box"><button data-name="d5" data-x="4" data-y="5"></button></div>
+                    <div class="box"><button data-name="e5" data-x="5" data-y="5"></button></div>
+                    <div class="box"><button data-name="f5" data-x="6" data-y="5"></button></div>
+                    <div class="box"><button data-name="g5" data-x="7" data-y="5"></button></div>
+                    <div class="box"><button data-name="h5" data-x="8" data-y="5"></button></div>
+                </div>
+                <div class="row">
+                    <div class="box"><button data-name="a6" data-x="1" data-y="6"></button></div>
+                    <div class="box"><button data-name="b6" data-x="2" data-y="6"></button></div>
+                    <div class="box"><button data-name="c6" data-x="3" data-y="6"></button></div>
+                    <div class="box"><button data-name="d6" data-x="4" data-y="6"></button></div>
+                    <div class="box"><button data-name="e6" data-x="5" data-y="6"></button></div>
+                    <div class="box"><button data-name="f6" data-x="6" data-y="6"></button></div>
+                    <div class="box"><button data-name="g6" data-x="7" data-y="6"></button></div>
+                    <div class="box"><button data-name="h6" data-x="8" data-y="6"></button></div>
+                </div>
+                <div class="row">
+                    <div class="box"><button data-name="a7" data-x="1" data-y="7"></button></div>
+                    <div class="box"><button data-name="b7" data-x="2" data-y="7"></button></div>
+                    <div class="box"><button data-name="c7" data-x="3" data-y="7"></button></div>
+                    <div class="box"><button data-name="d7" data-x="4" data-y="7"></button></div>
+                    <div class="box"><button data-name="e7" data-x="5" data-y="7"></button></div>
+                    <div class="box"><button data-name="f7" data-x="6" data-y="7"></button></div>
+                    <div class="box"><button data-name="g7" data-x="7" data-y="7"></button></div>
+                    <div class="box"><button data-name="h7" data-x="8" data-y="7"></button></div>
+                </div>
+                <div class="row">
+                    <div class="box"><button data-name="a8" data-x="1" data-y="8"></button></div>
+                    <div class="box"><button data-name="b8" data-x="2" data-y="8"></button></div>
+                    <div class="box"><button data-name="c8" data-x="3" data-y="8"></button></div>
+                    <div class="box"><button data-name="d8" data-x="4" data-y="8"></button></div>
+                    <div class="box"><button data-name="e8" data-x="5" data-y="8"></button></div>
+                    <div class="box"><button data-name="f8" data-x="6" data-y="8"></button></div>
+                    <div class="box"><button data-name="g8" data-x="7" data-y="8"></button></div>
+                    <div class="box"><button data-name="h8" data-x="8" data-y="8"></button></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js" defer></script> -->
+    <script src="main.js"></script>
+</body>
+</html>
