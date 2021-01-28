@@ -8,6 +8,9 @@
 </head>
 <body>
     <div class="app-wrapper">
+        <div class="timer">
+            <div id="time">20</div>
+        </div>
         <div class="controls">
             <div class="pieces">
                 <div class="white">
@@ -31,22 +34,25 @@
                 </div>
             </div>
             <div class="board-controls">
-                <div>
+                <!-- <div>
                     <button type="button" onclick="App.clearBoard()">Clear Board</button>
-                </div>
-                <div>
+                </div> -->
+                <div id="play-game">
                     <button onclick="Game.init()">Play</button>
+                </div>
+                <div id="submit-answer" style="display: none;">
+                    <button onclick="Game.validateSubmittedPosition()">Submit</button>
                 </div>
                 <div>
                     <label><input type="checkbox" id="flip-board"> Flip Board</label>
                 </div>
                 <div>
-                    <label><input type="checkbox" id="show-moves"> Show Moves</label>
+                    <label><input type="checkbox" checked id="show-moves"> Show Moves</label>
                 </div>
             </div>
         </div>
         <div class="board-wrapper">
-            <div class="board">
+            <div class="board show-moves">
                 <div class="row">
                     <div class="box"><button data-name="a1" data-x="1" data-y="1"></button></div>
                     <div class="box"><button data-name="b1" data-x="2" data-y="1"></button></div>

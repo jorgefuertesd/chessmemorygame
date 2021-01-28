@@ -31,8 +31,6 @@ const App = {
     setBox: (event) =>  {
         const self = event.target;
 
-        App.showMoves(self.dataset.name, App.state.currentPiece);
-
         if(self.dataset.piece !== '' && App.state.currentPiece === 'rm') {
             App.currentPieceBtn(self.dataset.piece).disabled = false;
             self.dataset.piece = '';
@@ -40,6 +38,8 @@ const App = {
         }
 
         if (self.dataset.piece) {
+            App.state.currentPiece = self.dataset.piece;
+            App.showMoves(self.dataset.name, self.dataset.piece);
             return;
         }
 
@@ -48,7 +48,7 @@ const App = {
         }
 
         App.state.currentBox = self.dataset.name;
-        self.dataset.piece = App.state.currentPiece;
+        self.dataset.piece = App.state.currentPiece === 'rm' ? '' : App.state.currentPiece;
 
         if (!App.isValidPieceQty(App.state.currentPiece)) {
             App.currentPieceBtn().disabled = true;
@@ -64,8 +64,7 @@ const App = {
         const moves = Rules.moves[info.name](box, info);
 
         for (const move of moves) {
-            let box = document.querySelector('.box [data-name="' + move + '"]');
-            box.classList.add('highlight');
+            getBox(move).classList.add('highlight');
         }
     },
     clearPieces: () => {
@@ -131,11 +130,14 @@ const App = {
 
 const Game = {
     state: {
-        currentLevel: 3,
+        currentLevel: 1,
         currentPosition: [],
         history: [],
         taken: [],
         board: virtualBoard(),
+        time: 20,
+        counter: 20,
+        countDown: null,
     },
     level: {
         //Keep kings at the end.
@@ -145,6 +147,9 @@ const Game = {
     },
     init: () => {
         Game.setBoard(Game.getRandomBoard());
+        Game.setCountDown();
+
+
     },
     setBoard: (positions) => {
         App.clearBoard();
@@ -154,6 +159,28 @@ const Game = {
             box.dataset.piece = position.piece
         }
     },
+    setCountDown: () => {
+        Game.resetCountDown();
+
+        let counter = document.getElementById('time');
+        counter.innerHTML = Game.state.time;
+        Game.state.counter = Game.state.time;
+        document.getElementById('submit-answer').style.display = 'none';
+
+        Game.state.countDown = setInterval(() => {
+            Game.state.counter -= 1;
+            counter.innerHTML = Game.state.counter;
+
+            if (Game.state.counter === 0) {
+                Game.resetCountDown();
+                App.clearBoard();
+                document.getElementById('submit-answer').style.display = 'block';
+            }
+        }, 1000);
+    },
+    resetCountDown: () => {
+        clearInterval(Game.state.countDown);
+    },
     getRandomBoard: () => {
         Game.state.taken = [];
 
@@ -161,6 +188,7 @@ const Game = {
 
         for(const piece of Game.level[Game.state.currentLevel]) {
             let box = Game.getRandomBox(piece);
+            App.state.currentPiece = piece;
             positions.push({
                 piece: piece,
                 box: box,
@@ -191,6 +219,52 @@ const Game = {
         Game.state.taken.push(box);
         return box;
     },
+    getCurrentPosition: () => {
+        const boxes = document.querySelectorAll('.box button');
+        let current = [];
+        for (const box of boxes) {
+            if (['rm', '', undefined].indexOf(box.dataset.piece) === -1) {
+                current.push({
+                    piece: box.dataset.piece,
+                    box: box.dataset.name,
+                });
+            }
+        }
+        console.log(current);
+        return current;
+    },
+    validateSubmittedPosition: () => {
+        const challenge = Game.state.history[Game.state.history.length - 1];
+        const answers = Game.getCurrentPosition();
+        let score = 0;
+
+        for (const answer of answers) {
+
+            if (Game.isCorrect(challenge, answer)) {
+                Game.markAsRight(answer.box);
+                score += 1;
+            } else {
+                Game.markAsWrong(answer.box);
+            }
+        }
+
+        return score;
+    },
+    isCorrect: (challenge, answer) => {
+        let correct = false;
+        for (const original of challenge) {
+            if (original.piece === answer.piece && original.box === answer.box) {
+                correct = true;
+            }
+        }
+        return correct;
+    },
+    markAsWrong: (box) => {
+        getBox(box).classList.add('danger');
+    },
+    markAsRight: (box) => {
+        getBox(box).classList.add('highlight');
+    },
 }
 
 /**
@@ -216,7 +290,7 @@ const Rules = {
             ];
 
             for (const direction of moveTo) {
-                for (let i = 0; i < 8; i++) {
+                for (let i = 1; i < 8; i++) {
                     let b = Rules.moves.move(box, i, direction[0], direction[1]);
                     if ( !b ) {
                         break;
@@ -224,6 +298,7 @@ const Rules = {
                     boxes.push(b);
                 }
             }
+
 
             return boxes;
         },
@@ -237,7 +312,7 @@ const Rules = {
             ];
 
             for (const direction of moveTo) {
-                for (let i = 0; i < 8; i++) {
+                for (let i = 1; i < 8; i++) {
                     let b = Rules.moves.move(box, i, direction[0], direction[1]);
                     if ( !b ) {
                         break;
@@ -264,8 +339,8 @@ const Rules = {
             ];
 
             return coordinates
-                .filter(c => !reachLimit(c[0], c[1]))
-                .map(c => `${getLetter(c[0])}${c[1]}`);
+                .filter(c => Rules.moves.checkCurrentBox(c[0],c[1]))
+                .map(c => getBoxName(c[0],c[1]));
         },
         q: (box) => {
             return Rules.moves.r(box).concat(Rules.moves.b(box));
@@ -286,8 +361,8 @@ const Rules = {
             ];
 
             return coordinates
-                .filter(c => !reachLimit(c[0], c[1]))
-                .map(c => `${getLetter(c[0])}${c[1]}`);
+                .filter(c => Rules.moves.checkCurrentBox(c[0],c[1]))
+                .map(c => getBoxName(c[0],c[1]));
         },
         p: (box, info) => {
             const x = getX(box);
@@ -316,7 +391,7 @@ const Rules = {
 
             return coordinates
                 .filter(c => !reachLimit(c[0], c[1]))
-                .map(c => `${getLetter(c[0])}${c[1]}`);
+                .map(c => getBoxName(c[0], c[1]));
         },
         move: (box, index, movex = false, movey = false) => {
             let x = getX(box);
@@ -339,8 +414,16 @@ const Rules = {
                 return false;
             }
 
-            let boxName = `${getLetter(x)}${y}`;
+            return Rules.moves.checkCurrentBox(x,y);
+        },
+        checkCurrentBox: (x,y) => {
+            if (reachLimit(x, y)) {
+                return false;
+            }
+
+            let boxName = getBoxName(x,y);
             let piece = hasPiece(boxName);
+
             if ( piece ) {
                 let pInfo = getPieceInfo(piece);
                 let cpInfo = getPieceInfo(App.state.currentPiece);
@@ -352,7 +435,7 @@ const Rules = {
             }
 
             return boxName;
-        },
+        }
     }
 }
 
@@ -378,8 +461,12 @@ function getY(box) {
     return parseInt(box[1]);
 }
 
-function getBox(location) {
-    return document.querySelector('.box [data-name="' + location + '"]');
+function getBoxName(x,y) {
+    return `${getLetter(x)}${y}`;
+}
+
+function getBox(box) {
+    return document.querySelector('.box [data-name="' + box + '"]');
 }
 
 function getLetter(x) {

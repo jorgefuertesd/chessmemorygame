@@ -211,3 +211,11 @@
     background: url('img/trash.svg') no-repeat center center;
     background-size: 35px 35px;
 }
+.timer {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    font-size: 40px;
+    padding: 20px;
+    transform: translateY(-50%);
+}
