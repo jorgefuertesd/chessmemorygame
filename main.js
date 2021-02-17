@@ -1,6 +1,6 @@
 const App = {
     state: {
-        currentPiece: null,
+        currentPiece: null, 'Oye, ponle comentarios a las cosas :P
         currentBox: null,
         showMoves: false,
         boxes: document.querySelectorAll('.box button'),
